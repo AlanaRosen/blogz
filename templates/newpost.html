@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link rel='stylesheet' href='style.css' type='text/css' />
+
+<div>
+    <h1> {{ write_title }}</h1>
+</div>
+
+<form method='POST'>
+    <div>
+        <input type='textarea' style="height:25px;width:300px" name='blog_title' value='{{ blogtitle }}' placeholder='Title Your Blog' />
+        <span class='error'>{{title_error}}</span>
+    </div>
+
+    <div>
+        <input type='textarea' style="height:200px;width:300px;margin-top:40px" name='write_blog' value='{{ writeblog }}'
+            placeholder="Let's hear what you've got to say." />
+        <span class='error'>{{blog_error}}</span>
+    </div>
+
+    <div>
+        <input type='submit' value='Post Me' style="margin-top:20px" />
+    </div>
+</form>
+
+{% endblock %}
