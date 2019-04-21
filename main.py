@@ -1,7 +1,5 @@
-from flask import Flask, request, redirect, render_template 
+from flask import Flask, request, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy 
-import cgi
-import os 
 
 app = Flask(__name__)
 app.config['DEBUG'] = True 
@@ -18,15 +16,17 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
-blogs = []
+def get_blogs():
+    return db.session.query(Blog).order_by(Blog.id.desc()).all()
 
 @app.route('/')
 def index():
-    return redirect('/blog')
-
-@app.route('/blog')
-def blog_page():
-    return render_template('blog.html', title='Your Blog', blog_display = 'Your Blog', blogs=blogs)
+    return render_template(
+        'home.html',
+        title='Your Blog',
+        blog_display = 'Your Blog',
+        blogs=get_blogs()
+    )
 
 @app.route('/newpost')
 def post_new():
@@ -60,23 +60,17 @@ def validate_entry():
 
     else:
         blog = Blog(blog_title, write_blog)
-        blogs.append(blog)
-        return redirect('/blog')
+        db.session.add(blog)
+        db.session.commit()
 
-@app.route('/single_blog', methods=['GET'])
+        return redirect('/blog?id=' + str(blog.id))
+
+@app.route('/blog', methods=['GET'])
 def singleblog():
 
     id = request.args.get('id')
-
-    return render_template('single_blog.html', blog_title = id.title, blog_body = id.body, id = id)
+    a_blog = Blog.query.get(id)
+    return render_template('blog.html', blog=a_blog)
     
 if __name__ == '__main__':
     app.run()
-
-
-
-
-# 'add a new post' and blog listings on the same page
-# separate those portions into separate routes, handler classes, and templates
-# when a user submits a new post, redirect them to the main blog page
-# nav links on both pages

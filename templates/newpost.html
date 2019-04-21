@@ -1,26 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<link rel='stylesheet' href='style.css' type='text/css' />
-
 <div>
-    <h1> {{ write_title }}</h1>
+    <h1>{{ write_title }}</h1>
 </div>
 
 <form method='POST'>
     <div>
-        <input type='textarea' style="height:25px;width:300px" name='blog_title' value='{{ blogtitle }}' placeholder='Title Your Blog' />
+        <input type='textarea' id='blog-title' name='blog_title' value='{{ blogtitle }}' placeholder='Title Your Blog' class='title' />
         <span class='error'>{{title_error}}</span>
     </div>
 
     <div>
-        <input type='textarea' style="height:200px;width:300px;margin-top:40px" name='write_blog' value='{{ writeblog }}'
-            placeholder="Let's hear what you've got to say." />
+        <input type='textarea' id='write-blog' name='write_blog' value='{{ writeblog }}' placeholder="Let's hear what you've got to say." class='body' />
         <span class='error'>{{blog_error}}</span>
     </div>
 
     <div>
-        <input type='submit' value='Post Me' style="margin-top:20px" />
+        <input type='submit' value='Post Me' id='submitbutton' />
     </div>
 </form>
 

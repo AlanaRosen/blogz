@@ -1,0 +1,59 @@
+html {
+    height: 100%;
+}
+
+body {
+    margin:0;
+    margin-left: 5%;
+    margin-right: 5%;
+    text-align: center;
+}
+
+nav {
+    font-family: "Century Gothic", sans-serif;
+    font-size: 15px;
+    color: gray;
+    position: relative;
+    padding: 25px;
+}
+
+h1 {
+    font-family: "Broadway", sans-serif;
+    font-size: 60px;
+    height: normal;
+    font-variant: small-caps;     
+}
+
+.title {
+    font-family: "Forte", "Bauhaus 93", "Broadway", sans-serif;
+    font-size: 37px;
+}
+
+.body {
+    font-family: "Ink Free", "Bradley Hand ITC", monospace;
+}
+
+.background {
+    background: linear-gradient(75deg, rgb(182, 97, 238), rgb(160, 107, 245));
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#submitbutton {
+    margin-top: 20px;
+}
+
+#blog-title {
+    height:25px;
+    width:300px;
+    font-family: "Forte", "Bauhaus 93", "Broadway", sans-serif;
+    font-size: 21px;
+}
+
+#write-blog {
+    height:300px;
+    width:500px;
+    margin-top:40px;
+    font-family: "Ink Free", "Bradley Hand ITC", monospace;
+    font-size: 16px;
+}
