@@ -15,6 +15,7 @@ nav {
     color: gray;
     position: relative;
     padding: 25px;
+    font-weight: bold;
 }
 
 h1 {
@@ -34,7 +35,7 @@ h1 {
 }
 
 .background {
-    background: linear-gradient(75deg, rgb(182, 97, 238), rgb(160, 107, 245));
+    background: linear-gradient(45deg, rgb(230, 86, 187), rgb(160, 107, 245));
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
