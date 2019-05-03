@@ -1,34 +1,183 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy 
+import re
 
 app = Flask(__name__)
 app.config['DEBUG'] = True 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:build-a-blog@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:blogz@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True 
 db = SQLAlchemy(app)
+app.secret_key = 'fjgiowefj232esj5f'
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(300))
     body = db.Column(db.String(5000))
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    def __init__(self,title,body):
+    def __init__(self,title,body,owner):
         self.title = title
         self.body = body
+        self.owner = owner
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True)
+    email = db.Column(db.String(120), unique=True)
+    password = db.Column(db.String(50))
+    blogs = db.relationship('Blog', backref='owner')
+    
+
+    def __init__(self,username,password,email):
+        self.username = username
+        self.password = password
+        self.email = email
+        
 
 def get_blogs():
     return db.session.query(Blog).order_by(Blog.id.desc()).all()
 
-@app.route('/')
-def index():
-    return render_template(
-        'home.html',
-        title='Your Blog',
-        blog_display = 'Your Blog',
-        blogs=get_blogs()
-    )
+def get_blogs_by_user_id(user_id):
+    return db.session.query(Blog).filter_by(owner_id=user_id).all()
 
-@app.route('/newpost')
+def get_single_blog(id):
+    return db.session.query(Blog).filter_by(id=id).first()
+
+def get_user():
+    return db.session.query(User).filter_by(email=session['user']).first()
+
+def get_usernames():
+    return db.session.query(User).all()
+
+
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'signup', 'blog', 'index']
+    if request.endpoint not in allowed_routes and 'user' not in session:
+        return redirect('/login')
+
+@app.route('/login', methods=['POST','GET'])
+def login():
+    user_error = ''
+    password_error = ''
+    signup_error = ''
+    logged_in = ''
+
+    if 'user' in session:
+        user_error = 'You are already logged in'
+        return redirect('/blog')
+
+    if request.method == 'GET':
+        return render_template('login.html',
+                                user_error=user_error,
+                                password_error=password_error,
+                                signup_error=signup_error,
+                                logged_in=logged_in)
+
+    if request.method == 'POST' :
+        username = request.form['username']
+        password = request.form['password']
+            
+        user = db.session.query(User).filter_by(username=username).first()
+
+        if user:
+            if user.password == password:
+                session['user'] = user.email
+                logged_in = 'Logged in'
+                return redirect('/')
+            else:
+                password_error = 'That password is incorrect'
+                return redirect('/login')
+        else:
+            signup_error = 'You need to register for an account'
+            return redirect('/signup')
+    
+
+@app.route('/logout')
+def logout():
+    del session['user']
+    return redirect('/blog')
+
+@app.route('/', methods=['GET'])
+def index():
+    usernames = get_usernames()
+    return render_template('index.html',
+                            usernames_display='List of Blogger Usernames',
+                            username_list=usernames)
+
+@app.route('/signup', methods=['POST','GET'])
+def signup():
+    if request.method == 'GET':
+        return render_template('signup.html')
+
+    if request.method == 'POST' :
+        email = request.form['email']
+        password = request.form['password']
+        password_verification = request.form['verify_password']
+        username = request.form['username']
+
+        existing_user = db.session.query(User).filter_by(username=username).first()
+
+        if existing_user:
+            flash('You aleady have an account')
+            return redirect('/login')
+  
+        if not existing_user:
+            if valid_email(email) == False:
+                flash('Invalid email')
+                return redirect('/signup')
+        if valid_password(password) == False:
+            flash('Invalid password - between 5 and 50 characters please')
+            return redirect('/signup')
+        if valid_verify(password,password_verification) == False:
+            flash('This password did not match your previous entry')
+            return redirect('/signup')
+        if valid_email(email)==True and valid_password(password)==True and valid_verify(password,password_verification)==True:
+            user = User(username,password,email)
+            db.session.add(user)
+            db.session.commit()
+            session['user'] = user.email
+            flash('You registered an account.')
+            return redirect('/newpost')
+        else:
+            return redirect('/signup')
+
+def valid_email(email):
+    if email != '':
+        if not re.match(r'^[^@ ]+@[^@ ]+\.[^@ ]+$', email):
+            return False
+    if email == '':
+        return False
+
+    return True
+
+def valid_password(password):
+    if password == '':
+        return False
+    if len(password) > 50 or len(password) < 5:
+        return False
+    return True
+
+def valid_verify(password, verify_password):
+    if verify_password != password:
+        return False
+    return True
+
+@app.route('/blog')
+def blog():
+    blogs = []
+    user_id = request.args.get('user')
+    if user_id is None:
+        blogs = get_blogs()
+    else:
+        blogs = get_blogs_by_user_id(int(user_id))
+    return render_template(
+        'blog.html',
+        title='Blogs',
+        blog_display = 'All Blogs',
+        blog_list=blogs)
+
+@app.route('/newpost', methods=['GET'])
 def post_new():
     return render_template('newpost.html', write_title ='Write Your Blog') 
 
@@ -59,18 +208,18 @@ def validate_entry():
                         title_error = title_error)
 
     else:
-        blog = Blog(blog_title, write_blog)
+        blog = Blog(blog_title, write_blog, get_user())
         db.session.add(blog)
         db.session.commit()
 
-        return redirect('/blog?id=' + str(blog.id))
+        return redirect('/single_blog?id=' + str(blog.id))
 
-@app.route('/blog', methods=['GET'])
+@app.route('/single_blog', methods=['GET'])
 def singleblog():
-
-    id = request.args.get('id')
-    a_blog = Blog.query.get(id)
-    return render_template('blog.html', blog=a_blog)
+    id = request.args['id']
+    return render_template('single_blog.html',
+                            title='A Blog',
+                            blog=get_single_blog(id))
     
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

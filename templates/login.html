@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+    <h2>Login</h2>
+</div>
+
+<form action='/login' method='POST'>
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <label for='username'>Username: </label>
+                </td>
+                <td>
+                    <input type='text' name='username' id='username' />
+                    <span class='error'>{{user_error}}</span>
+                </td>
+            <tr>
+                <td>
+                    <label for='password'>Password: </label>
+                </td>
+                <td>
+                    <input type='password' name='password' id='password' />
+                    <span class='error'>{{password_error}}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type='submit' value='Log Me In' />
+</form>
+
+{% endblock %}

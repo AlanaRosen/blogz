@@ -1,0 +1,20 @@
+
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <div>
+    <h1>{{usernames_display}}</h1>
+    </div> 
+
+        <hr />
+
+        {% for username in username_list %}
+        
+        <br /> 
+        <a href='/blog?user={{username.id}}'>{{username.username}}</a>
+        {% endfor %} 
+
+{% endblock %}
