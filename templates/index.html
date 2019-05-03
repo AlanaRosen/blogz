@@ -14,7 +14,7 @@
         {% for username in username_list %}
         
         <br /> 
-        <a href='/blog?user={{username.id}}'>{{username.username}}</a>
+        <a class='bloggers' href='/blog?user={{username.id}}'>{{username.username}}</a>
         {% endfor %} 
 
 {% endblock %}

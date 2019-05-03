@@ -52,7 +52,7 @@ def get_usernames():
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'blog', 'index']
+    allowed_routes = ['login', 'signup', 'blog', 'index', 'static']
     if request.endpoint not in allowed_routes and 'user' not in session:
         return redirect('/login')
 

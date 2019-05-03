@@ -35,6 +35,12 @@ h1 {
     font-variant: small-caps;     
 }
 
+.bloggers {
+    font-family: "Lucida Handwriting", "Lucida Calligraphy", "Ink Free", sans-serif;
+    font-weight: bold;
+    font-size: 27px;
+}
+
 .title {
     font-family: "Forte", "Bauhaus 93", "Broadway", sans-serif;
     font-size: 37px;
