@@ -10,19 +10,19 @@
             <span><a href='/'>Home</a></span>
             <span><a href='/blog'>Blogs</a></span>
             <span><a href='/newpost'>Create New Blog</a></span>
-            <span><a href='/login'>Login</a></span>
             <span><a href='/signup'>Sign Up</a></span>
+            <span><a href='/login'>Login</a></span>
             <span><a href='/logout'>Logout</a></span>
         </nav>
     </header>
 
 
     {% with messages = get_flashed_messages(with_categories=True) %}
-        <ul>
+        
         {% for category,message in messages %}
-            <li class='{{category}}'>{{message}}</li>
+            <p class='{{category}}'>{{message}}</p>
         {% endfor %}
-        </ul>
+        
     {% endwith %}
 
     {% block content %}

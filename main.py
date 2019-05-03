@@ -58,21 +58,13 @@ def require_login():
 
 @app.route('/login', methods=['POST','GET'])
 def login():
-    user_error = ''
-    password_error = ''
-    signup_error = ''
-    logged_in = ''
 
     if 'user' in session:
-        user_error = 'You are already logged in'
+        flash('You are already logged in')
         return redirect('/blog')
 
     if request.method == 'GET':
-        return render_template('login.html',
-                                user_error=user_error,
-                                password_error=password_error,
-                                signup_error=signup_error,
-                                logged_in=logged_in)
+        return render_template('login.html')
 
     if request.method == 'POST' :
         username = request.form['username']
@@ -86,10 +78,10 @@ def login():
                 logged_in = 'Logged in'
                 return redirect('/')
             else:
-                password_error = 'That password is incorrect'
+                flash('That password is incorrect')
                 return redirect('/login')
         else:
-            signup_error = 'You need to register for an account'
+            flash('You need to register for an account')
             return redirect('/signup')
     
 
@@ -167,6 +159,7 @@ def valid_verify(password, verify_password):
 def blog():
     blogs = []
     user_id = request.args.get('user')
+    username = db.session.query(User).filter_by(id=user_id).first()
     if user_id is None:
         blogs = get_blogs()
     else:
@@ -175,7 +168,8 @@ def blog():
         'blog.html',
         title='Blogs',
         blog_display = 'All Blogs',
-        blog_list=blogs)
+        blog_list=blogs,
+        username=username)
 
 @app.route('/newpost', methods=['GET'])
 def post_new():

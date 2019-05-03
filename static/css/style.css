@@ -9,6 +9,12 @@ body {
     text-align: center;
 }
 
+.author {
+    font-family: "Century Gothic", sans-serif;
+    font-size: 11px;
+    font-variant: small-caps;
+}
+
 nav {
     font-family: "Century Gothic", sans-serif;
     font-size: 15px;
@@ -16,11 +22,10 @@ nav {
     position: relative;
     padding: 25px;
     font-weight: bold;
-    margin-left: 20px;
 }
 
 nav span a {
-    margin-left: 20px;
+    margin-left: 30px;
 }
 
 h1 {
@@ -45,9 +50,10 @@ h1 {
     background-attachment: fixed;
 }
 
-.flashes {
+.message {
     font-family: "Chiller", "Century Gothic", sans-serif;
-    font-size: 21px;
+    font-size: 49px;
+    color: maroon;
 }
 
 #submitbutton {
